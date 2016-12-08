@@ -1,0 +1,91 @@
+Instalando no Python:
+https://avro.apache.org/docs/current/gettingstartedpython.html
+
+sudo ls
+
+
+No Python2:
+
+Comandos para instalação:
+
+Comandos que eu fiz para criar a pasta e baixar
+cd ~
+mkdir AvroPython
+pushd AvroPython
+wget http://ftp.unicamp.br/pub/apache/avro/avro-1.8.1/py/avro-1.8.1.tar.gz
+tar xvf avro-1.8.1.tar.gz
+cd avro-1.8.1
+sudo python setup.py install
+cd ..
+sudo rm -rf avro-1.8.1
+popd
+sudo rm -rf AvroPython
+
+
+
+No Python3:
+Comandos que eu fiz para criar a pasta e baixar
+sudo apt-get install python3-pip
+cd ~
+mkdir AvroPython3
+pushd AvroPython3
+wget http://ftp.unicamp.br/pub/apache/avro/avro-1.8.1/py3/avro-python3-1.8.1.tar.gz
+tar xvf avro-python3-1.8.1.tar.gz
+cd avro-python3-1.8.1
+sudo python3 setup.py install
+cd ..
+sudo rm -rf avro-python3-1.8.1
+popd
+sudo rm -rf AvroPython3
+
+
+
+
+Após isso, fiz o comando:
+python
+e digitei no terminal:
+import avro
+
+Nenhum erro ocorreu indicando que o python está instalado (print 1)
+
+
+
+Agora vou executar o exemplo do site:
+executo as linhas de comando:
+cd ~
+mkdir AvroPython
+cd AvroPython
+echo "{\"namespace\": \"example.avro\",
+ \"type\": \"record\",
+ \"name\": \"User\",
+ \"fields\": [
+     {\"name\": \"name\", \"type\": \"string\"},
+     {\"name\": \"favorite_number\",  \"type\": [\"int\", \"null\"]},
+     {\"name\": \"favorite_color\", \"type\": [\"string\", \"null\"]}
+ ]
+}" > user.avsc
+
+E criei um arquivo schema que será utilizado para informar ao avro como é a disposição dos dados que irei serializar.
+
+agora vou fazer um script que lê o schema e serializa um exemplo:
+echo "import avro.schema
+from avro.datafile import DataFileReader, DataFileWriter
+from avro.io import DatumReader, DatumWriter
+
+schema = avro.schema.parse(open(\"user.avsc\", \"rb\").read())
+
+writer = DataFileWriter(open(\"users.avro\", \"wb\"), DatumWriter(), schema)
+writer.append({\"name\": \"Alyssa\", \"favorite_number\": 256})
+writer.append({\"name\": \"Ben\", \"favorite_number\": 7, \"favorite_color\": \"red\"})
+writer.close()
+
+reader = DataFileReader(open(\"users.avro\", \"rb\"), DatumReader())
+for user in reader:
+    print user
+reader.close()" > script1.py
+python script1.py
+
+O resultado foi igual ao esperado pelo tutorial:
+Resultado:
+{u'favorite_color': None, u'favorite_number': 256, u'name': u'Alyssa'}
+{u'favorite_color': u'red', u'favorite_number': 7, u'name': u'Ben'}
