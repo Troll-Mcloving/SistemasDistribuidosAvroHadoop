@@ -1,0 +1,9 @@
+{
+ "namespace": "avropesquisadores",
+ "name": "Pesquisador",
+ "type": "record",
+ "fields": [
+     {"name": "colaboradores", "type": "string"},
+     {"name": "id", "type": "string"}
+ ]
+}

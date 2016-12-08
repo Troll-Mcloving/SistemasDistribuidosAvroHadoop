@@ -1,0 +1,83 @@
+﻿Para o Java o tutorial é:
+https://avro.apache.org/docs/current/gettingstartedjava.html
+
+
+Baixei os arquivos de dependencia:
+avro-1.8.1.jar (http://ftp.unicamp.br/pub/apache/avro/avro-1.8.1/java/avro-1.8.1.jar)
+jackson-core-asl-1.9.13.jar (http://central.maven.org/maven2/org/codehaus/jackson/jackson-core-asl/1.9.13/jackson-core-asl-1.9.13.jar)
+jackson-mapper-asl-1.9.13.jar (http://central.maven.org/maven2/org/codehaus/jackson/jackson-mapper-asl/1.9.13/jackson-mapper-asl-1.9.13.jar)
+
+
+E o arquivo avro-tools-1.8.1.jar (http://ftp.unicamp.br/pub/apache/avro/avro-1.8.1/java/avro-tools-1.8.1.jar)
+
+
+
+Criei um projeto no netbeans, 
+chamado: AvroPesquisadores
+dentro da pasta do projeto, dentro da pasta src
+fiz um arquivo /src/Pesquisador.avsc, contendo:
+{
+ "namespace": "avropesquisadores",
+ "name": "Pesquisador",
+ "type": "record",
+ "fields": [
+     {"name": "colaboradores", "type": "string"},
+     {"name": "id", "type": "string"}
+ ]
+}
+
+
+coloquei o arquivo /src/avro-tools-1.8.1.jar e executei:
+java -jar avro-tools-1.8.1.jar compile schema Pesquisador.avsc .
+
+montei o seguinte arquivo /src/avropesquisadores/AvroPesquisadores.java
+contendo:
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package avropesquisadores;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.avro.file.DataFileReader;
+import org.apache.avro.io.DatumReader;
+import org.apache.avro.specific.SpecificDatumReader;
+
+/**
+ *
+ * @author Leonardo
+ */
+public class AvroPesquisadores {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+        try {
+            // Deserialize Users from disk
+            File file = new File("Pesquisador.avro");
+            DatumReader<Pesquisador> userDatumReader = new SpecificDatumReader<Pesquisador>(Pesquisador.class);
+            DataFileReader<Pesquisador> dataFileReader = new DataFileReader<Pesquisador>(file, userDatumReader);
+            Pesquisador pesquisador = null;
+            while(dataFileReader.hasNext()) {
+                pesquisador = dataFileReader.next(pesquisador);
+                System.out.println(pesquisador);
+            }
+        } catch(IOException ex) {
+            Logger.getLogger(AvroPesquisadores.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+}
+
+
+Executei e o resultado foi igual ao esperado pelo tutorial:
+print 1
+no cluster está no print 2
